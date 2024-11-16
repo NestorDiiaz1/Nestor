@@ -7,15 +7,11 @@ from google.oauth2.service_account import Credentials
 # Función para conectar con Google Sheets
 def connect_to_google_sheets():
     # Crear el diccionario de credenciales desde las variables de entorno
-    private_key = os.getenv("PRIVATE_KEY")
-    if private_key is None:
-        raise ValueError("La variable de entorno 'PRIVATE_KEY' no está configurada.")
-    
     credentials_dict = {
         "type": os.getenv("TYPE"),
         "project_id": os.getenv("PROJECT_ID"),
         "private_key_id": os.getenv("PRIVATE_KEY_ID"),
-        "private_key": private_key.replace("\\n", "\n"),
+        "private_key": os.getenv("PRIVATE_KEY").replace("\\n", "\n"),
         "client_email": os.getenv("CLIENT_EMAIL"),
         "client_id": os.getenv("CLIENT_ID"),
         "auth_uri": os.getenv("AUTH_URI"),
@@ -26,7 +22,7 @@ def connect_to_google_sheets():
 
     creds = Credentials.from_service_account_info(credentials_dict)
     client = gspread.authorize(creds)
-    spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
+    spreadsheet = client.open_by_key("your_google_sheet_id")  # Reemplaza con el ID de tu Google Sheet
     worksheet = spreadsheet.sheet1
     return worksheet
 
