@@ -6,12 +6,19 @@ from google.oauth2.service_account import Credentials
 
 # Función para conectar con Google Sheets
 def connect_to_google_sheets():
+    # Leer la clave privada desde las variables de entorno
+    private_key = os.getenv("PRIVATE_KEY")
+    
+    # Validar que la clave no sea None
+    if private_key is None:
+        raise ValueError("La variable de entorno 'PRIVATE_KEY' no está configurada. Verifica en Streamlit Cloud > Secrets.")
+    
     # Crear el diccionario de credenciales desde las variables de entorno
     credentials_dict = {
         "type": os.getenv("TYPE"),
         "project_id": os.getenv("PROJECT_ID"),
         "private_key_id": os.getenv("PRIVATE_KEY_ID"),
-        "private_key": os.getenv("PRIVATE_KEY").replace("\\n", "\n"),
+        "private_key": private_key.replace("\\n", "\n"),
         "client_email": os.getenv("CLIENT_EMAIL"),
         "client_id": os.getenv("CLIENT_ID"),
         "auth_uri": os.getenv("AUTH_URI"),
@@ -25,6 +32,7 @@ def connect_to_google_sheets():
     spreadsheet = client.open_by_key("your_google_sheet_id")  # Reemplaza con el ID de tu Google Sheet
     worksheet = spreadsheet.sheet1
     return worksheet
+
 
 # Función para guardar datos en Google Sheets
 def save_to_google_sheets(data):
