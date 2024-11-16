@@ -8,12 +8,9 @@ from google.oauth2.service_account import Credentials
 def connect_to_google_sheets():
     # Leer la clave privada desde las variables de entorno
     private_key = os.getenv("PRIVATE_KEY")
-    
-    # Validar que la clave no sea None
     if private_key is None:
         raise ValueError("La variable de entorno 'PRIVATE_KEY' no está configurada. Verifica en Streamlit Cloud > Secrets.")
-    
-    # Crear el diccionario de credenciales desde las variables de entorno
+
     credentials_dict = {
         "type": os.getenv("TYPE"),
         "project_id": os.getenv("PROJECT_ID"),
