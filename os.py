@@ -4,26 +4,36 @@ import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
 
+# Depuración: Imprime las variables de entorno configuradas
+st.write("Verificando variables de entorno...")
+for key in ["TYPE", "PROJECT_ID", "PRIVATE_KEY", "PRIVATE_KEY_ID", "CLIENT_EMAIL", "CLIENT_ID"]:
+    value = os.getenv(key)
+    if value is None:
+        st.error(f"La variable de entorno {key} no está configurada.")
+    else:
+        st.write(f"{key}: Configurada correctamente.")
+        
 # Función para conectar con Google Sheets
 def connect_to_google_sheets():
-    # Leer la clave privada desde las variables de entorno
+    # Leer las credenciales desde las variables de entorno
     private_key = os.getenv("PRIVATE_KEY")
-    if private_key is None:
-        raise ValueError("La variable de entorno 'PRIVATE_KEY' no está configurada. Verifica en Streamlit Cloud > Secrets.")
+    if not private_key:
+        raise ValueError("La variable de entorno 'PRIVATE_KEY' no está configurada o es inválida.")
 
     credentials_dict = {
         "type": os.getenv("TYPE"),
         "project_id": os.getenv("PROJECT_ID"),
         "private_key_id": os.getenv("PRIVATE_KEY_ID"),
-        "private_key": private_key.replace("\\n", "\n"),
+        "private_key": private_key.replace("\\n", "\n"),  # Convertir \\n a saltos de línea
         "client_email": os.getenv("CLIENT_EMAIL"),
         "client_id": os.getenv("CLIENT_ID"),
         "auth_uri": os.getenv("AUTH_URI"),
         "token_uri": os.getenv("TOKEN_URI"),
         "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL"),
-        "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL")
+        "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL"),
     }
 
+    # Conectar con Google Sheets
     creds = Credentials.from_service_account_info(credentials_dict)
     client = gspread.authorize(creds)
     spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
