@@ -37,11 +37,7 @@ def connect_to_google_sheets():
     spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
     worksheet = spreadsheet.sheet1
     return worksheet
-     except Exception as e:
-        st.error("Error al guardar en Google Sheets.")
-       st.write("Detalles del error:", e)
-        raise
-
+   
 
 # Función para guardar datos en Google Sheets
 def save_to_google_sheets(data):
