@@ -31,8 +31,7 @@ def connect_to_google_sheets():
         "https://www.googleapis.com/auth/drive.file"    # Acceso a archivos en Google Drive
     ]
 
-    def connect_to_google_sheets():
-    try:
+
         # Crear credenciales
         creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
         client = gspread.authorize(creds)
