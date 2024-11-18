@@ -37,19 +37,40 @@ def connect_to_google_sheets():
     spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
     worksheet = spreadsheet.sheet1
     return worksheet
+    except Exception as e:
+        st.error("Error al conectarse a Google Sheets.")
+        st.write("Detalles del error:", e)
+        raise
 
 
 # Función para guardar datos en Google Sheets
 def save_to_google_sheets(data):
     try:
-        worksheet = connect_to_google_sheets()
-        # Convierte el registro en una lista de valores para añadirlo como una nueva fila
-        row = list(data.values())
-        worksheet.append_row(row)
+       worksheet = connect_to_google_sheets()
+        
+        for row in data:
+            print(row)  # Imprime los datos que se intentan guardar
+            worksheet.append_row(row)
         st.success("Datos guardados exitosamente en Google Sheets.")
     except Exception as e:
         st.error("Error al guardar en Google Sheets.")
-        st.write(e)
+       st.write("Detalles del error:", e)
+
+        # Streamlit UI
+st.title("Guardar Datos en Google Sheets")
+st.write("Introduce los datos que deseas guardar:")
+
+# Simulación de datos para guardar
+name = st.text_input("Nombre")
+email = st.text_input("Email")
+age = st.number_input("Edad", min_value=0, max_value=120, step=1)
+
+if st.button("Guardar Datos"):
+    if name and email and age:
+        data = [[name, email, age]]
+        save_to_google_sheets(data)
+    else:
+        st.error("Por favor, llena todos los campos antes de guardar.")
         
 # Inicialización de datos en Streamlit
 if "data" not in st.session_state:
