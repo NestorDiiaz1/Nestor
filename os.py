@@ -4,15 +4,7 @@ import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
 
-# Depuración: Imprime las variables de entorno configuradas
-st.write("Verificando variables de entorno...")
-for key in ["TYPE", "PROJECT_ID", "PRIVATE_KEY", "PRIVATE_KEY_ID", "CLIENT_EMAIL", "CLIENT_ID"]:
-    value = os.getenv(key)
-    if value is None:
-        st.error(f"La variable de entorno {key} no está configurada.")
-    else:
-        st.write(f"{key}: Configurada correctamente.")
-        
+
 # Función para conectar con Google Sheets
 def connect_to_google_sheets():
     # Leer las credenciales desde las variables de entorno
