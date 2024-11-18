@@ -4,55 +4,53 @@ import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
 
+import streamlit as st
+import gspread
+from google.oauth2.service_account import Credentials
+import os
 
-# Función para conectar con Google Sheets
+# Función para conectarse a Google Sheets
 def connect_to_google_sheets():
-    # Leer las credenciales desde las variables de entorno
-    private_key = os.getenv("PRIVATE_KEY")
-    if not private_key:
-        raise ValueError("La variable de entorno 'PRIVATE_KEY' no está configurada o es inválida.")
+    try:
+        # Carga las credenciales desde variables de entorno (secrets)
+        credentials = Credentials.from_service_account_info({
+            "type": os.getenv("TYPE"),
+            "project_id": os.getenv("PROJECT_ID"),
+            "private_key_id": os.getenv("PRIVATE_KEY_ID"),
+            "private_key": os.getenv("PRIVATE_KEY").replace("\\n", "\n"),
+            "client_email": os.getenv("CLIENT_EMAIL"),
+            "client_id": os.getenv("CLIENT_ID"),
+            "auth_uri": os.getenv("AUTH_URI"),
+            "token_uri": os.getenv("TOKEN_URI"),
+            "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL"),
+            "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL"),
+        }, scopes=["https://www.googleapis.com/auth/spreadsheets"])
 
-    credentials_dict = {
-        "type": os.getenv("TYPE"),
-        "project_id": os.getenv("PROJECT_ID"),
-        "private_key_id": os.getenv("PRIVATE_KEY_ID"),
-        "private_key": private_key.replace("\\n", "\n"),  # Convertir \\n a saltos de línea
-        "client_email": os.getenv("CLIENT_EMAIL"),
-        "client_id": os.getenv("CLIENT_ID"),
-        "auth_uri": os.getenv("AUTH_URI"),
-        "token_uri": os.getenv("TOKEN_URI"),
-        "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL"),
-        "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL"),
-    }
-
-      # Scopes necesarios para Google Sheets y Google Drive
-    scopes = [
-        "https://www.googleapis.com/auth/spreadsheets",  # Acceso a Google Sheets
-        "https://www.googleapis.com/auth/drive.file"    # Acceso a archivos en Google Drive
-    ]
-    
-    # Crear credenciales
-    creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
-    client = gspread.authorize(creds)
-    spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
-    worksheet = spreadsheet.sheet1
-    return worksheet
-   
+        # Autenticación y conexión
+        client = gspread.authorize(credentials)
+        spreadsheet = client.open_by_key("your_google_sheet_id")  # Sustituye con el ID de tu hoja de cálculo
+        worksheet = spreadsheet.sheet1  # Cambia "sheet1" por el nombre de tu hoja si es necesario
+        return worksheet
+    except Exception as e:
+        st.error("Error al conectarse a Google Sheets.")
+        st.write("Detalles del error:", e)
+        raise
 
 # Función para guardar datos en Google Sheets
 def save_to_google_sheets(data):
     try:
-       worksheet = connect_to_google_sheets()
+        worksheet = connect_to_google_sheets()
         
         for row in data:
             print(row)  # Imprime los datos que se intentan guardar
             worksheet.append_row(row)
+        
         st.success("Datos guardados exitosamente en Google Sheets.")
     except Exception as e:
         st.error("Error al guardar en Google Sheets.")
-       st.write("Detalles del error:", e)
+        st.write("Detalles del error:", e)
 
-        # Streamlit UI
+# Streamlit UI
 st.title("Guardar Datos en Google Sheets")
 st.write("Introduce los datos que deseas guardar:")
 
@@ -67,6 +65,7 @@ if st.button("Guardar Datos"):
         save_to_google_sheets(data)
     else:
         st.error("Por favor, llena todos los campos antes de guardar.")
+
         
 # Inicialización de datos en Streamlit
 if "data" not in st.session_state:
