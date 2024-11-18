@@ -31,28 +31,21 @@ def connect_to_google_sheets():
         "https://www.googleapis.com/auth/drive.file"    # Acceso a archivos en Google Drive
     ]
 
-
-
-         # Crear credenciales
+    # Crear credenciales
     creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
     client = gspread.authorize(creds)
-        spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
-        worksheet = spreadsheet.worksheet("Hoja1")
-        return worksheet
-    except Exception as e:
-        print("Error al conectar con Google Sheets:", e)
-        raise
+    spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
+    worksheet = spreadsheet.sheet1
+    return worksheet
+
 
 # Función para guardar datos en Google Sheets
 def save_to_google_sheets(data):
-    try:
-        worksheet = connect_to_google_sheets()
-        # Convierte el registro en una lista de valores para añadirlo como una nueva fila
-        row = list(data.values()) if isinstance(data, dict) else data
-        worksheet.append_row(row)
-        print("Datos guardados en Google Sheets:", row)  # Para depuración
-    except Exception as e:
-        print("Error al guardar datos en Google Sheets:", e)
+    worksheet = connect_to_google_sheets()
+    # Convierte el registro en una lista de valores para añadirlo como una nueva fila
+    row = list(data.values())
+    worksheet.append_row(row)
+    print("Datos guardados en Google Sheets:", row)  # Para depuración
   
 
 # Inicialización de datos en Streamlit
