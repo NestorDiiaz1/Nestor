@@ -33,8 +33,14 @@ def connect_to_google_sheets():
         "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL"),
     }
 
-    # Conectar con Google Sheets
-    creds = Credentials.from_service_account_info(credentials_dict)
+      # Scopes necesarios para Google Sheets y Google Drive
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",  # Acceso a Google Sheets
+        "https://www.googleapis.com/auth/drive.file"    # Acceso a archivos en Google Drive
+    ]
+    
+    # Crear credenciales
+    creds = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
     client = gspread.authorize(creds)
     spreadsheet = client.open_by_key("17iinnc55WcEUDk86zBwA7_OD_UF_tDx_ORMecj16JFs")  # Reemplaza con el ID de tu Google Sheet
     worksheet = spreadsheet.sheet1
