@@ -4,6 +4,7 @@ import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
 
+
 # Función para conectar con Google Sheets
 def connect_to_google_sheets():
     # Leer las credenciales desde las variables de entorno
@@ -45,7 +46,7 @@ def save_to_google_sheets(data):
     row = list(data.values())
     worksheet.append_row(row)
     print("Datos guardados en Google Sheets:", row)  # Para depuración
-        
+
 # Inicialización de datos en Streamlit
 if "data" not in st.session_state:
     st.session_state.data = []
@@ -132,4 +133,9 @@ if st.button("Guardar Datos"):
         })
     
     # Guardar datos en Google Sheets
-    save_to_google_sheets(data)
+    try:
+        save_to_google_sheets(data)
+        st.success("Datos guardados exitosamente en Google Sheets.")
+    except Exception as e:
+        st.error("Error al guardar en Google Sheets.")
+        st.write(e)
