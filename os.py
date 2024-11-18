@@ -41,12 +41,16 @@ def connect_to_google_sheets():
 
 # Función para guardar datos en Google Sheets
 def save_to_google_sheets(data):
-    worksheet = connect_to_google_sheets()
-    # Convierte el registro en una lista de valores para añadirlo como una nueva fila
-    row = list(data.values())
-    worksheet.append_row(row)
-    print("Datos guardados en Google Sheets:", row)  # Para depuración
-
+    try:
+        worksheet = connect_to_google_sheets()
+        # Convierte el registro en una lista de valores para añadirlo como una nueva fila
+        row = list(data.values())
+        worksheet.append_row(row)
+        st.success("Datos guardados exitosamente en Google Sheets.")
+    except Exception as e:
+        st.error("Error al guardar en Google Sheets.")
+        st.write(e)
+        
 # Inicialización de datos en Streamlit
 if "data" not in st.session_state:
     st.session_state.data = []
@@ -133,9 +137,4 @@ if st.button("Guardar Datos"):
         })
     
     # Guardar datos en Google Sheets
-    try:
-        save_to_google_sheets(data)
-        st.success("Datos guardados exitosamente en Google Sheets.")
-    except Exception as e:
-        st.error("Error al guardar en Google Sheets.")
-        st.write(e)
+    save_to_google_sheets(data)
